@@ -1,0 +1,3 @@
+.PHONY: black
+black:
+	black .
