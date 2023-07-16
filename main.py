@@ -14,6 +14,8 @@ class ExpenseTracker:
         "Electricity": 40,
         "Youtube": 4.5,
         "Entgeltabrechnung": 3.9,
+        "Birthday quarks": 2.45,
+        "Washing machine": 2.5
     }
     DB_FILENAME = "expenses.db"
 
@@ -120,9 +122,15 @@ class ExpenseTracker:
                     query="""SELECT strftime('%Y', dt) as year, 
                     strftime('%m', dt) as month, 
                     CASE WHEN category='Rent' then 'Housing'
+                        WHEN category='Washing machine' then 'Housing'
+                        WHEN category='Phone' then 'Housing'
                         WHEN category='Internet' then 'Housing'
                         WHEN category='Electricity' then 'Housing' 
                         WHEN category='Youtube' then 'Comfort (Tech / Furniture / Subscriptions)'
+                        WHEN category='Birthday quarks' then 'Other'
+                        WHEN category='Entgeltabrechnung' then 'Other'
+                        WHEN category='Entertainment' then 'Luxury (Eating out, entertainment)'
+                        WHEN category='Eating out' then 'Luxury (Eating out, entertainment)'
                         else category end as category, 
                     CAST(ROUND(sum(price)) AS INTEGER) as total
                 FROM expenses
