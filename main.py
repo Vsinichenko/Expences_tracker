@@ -6,7 +6,7 @@ from tabulate import tabulate
 class ExpenseTracker:
     """Track personal expenses and view summaries by category and month"""
 
-    FIXED_PRICE_CATEGORIES = {
+    fixed_price_categories = {
         "Therapy": 45,
         "Rent": 655,
         "Internet": 24.9,
@@ -15,16 +15,17 @@ class ExpenseTracker:
         "Youtube": 4.5,
         "Entgeltabrechnung": 3.9,
         "Birthday quarks": 2.45,
-        "Washing machine": 2.5
+        "Washing machine": 2.5,
+        "Health insurance": 127.65,
     }
-    DB_FILENAME = "expenses.db"
+    db_filename = "expenses.db"
 
     def __init__(self):
         self.conn = None
         self.cur = None
 
     def __enter__(self):
-        self.conn = sqlite3.connect(self.DB_FILENAME)
+        self.conn = sqlite3.connect(self.db_filename)
         self.cur = self.conn.cursor()
         return self
 
@@ -38,9 +39,7 @@ class ExpenseTracker:
 
     def get_date(self):
         """Get the date of the expense"""
-        print(
-            "Is it current month's expense? Print 1 for yes, 2 - for previous month is assumed"
-        )
+        print("Is it current month's expense? Print 1 for yes, 2 - for previous month is assumed")
         date_choice = int(input())
         if date_choice == 1:
             # first day ot the current month
@@ -49,9 +48,7 @@ class ExpenseTracker:
             # first day of the previous month
             now = datetime.date.today()
             first_day_of_current_month = now.replace(day=1)
-            last_day_of_previous_month = (
-                first_day_of_current_month - datetime.timedelta(days=1)
-            )
+            last_day_of_previous_month = first_day_of_current_month - datetime.timedelta(days=1)
             date = last_day_of_previous_month.replace(day=1)
         return date
 
@@ -70,8 +67,8 @@ class ExpenseTracker:
         else:
             category = categories[category_idx - 1][0]
 
-        if category in self.FIXED_PRICE_CATEGORIES:
-            price = self.FIXED_PRICE_CATEGORIES[category]
+        if category in self.fixed_price_categories:
+            price = self.fixed_price_categories[category]
             description = ""
         else:
             price = float(input("Enter price: ").replace(",", "."))
@@ -124,6 +121,7 @@ class ExpenseTracker:
                     CASE WHEN category='Rent' then 'Housing'
                         WHEN category='Washing machine' then 'Housing'
                         WHEN category='Phone' then 'Housing'
+                        WHEN category='Health insurance' then 'Housing'
                         WHEN category='Internet' then 'Housing'
                         WHEN category='Electricity' then 'Housing' 
                         WHEN category='Youtube' then 'Comfort (Tech / Furniture / Subscriptions)'
@@ -151,7 +149,7 @@ class ExpenseTracker:
                 self.execute_and_print(
                     title="ALL EXPENSES:",
                     query="""SELECT description, dt, category, price FROM expenses
-                            ORDER BY dt desc""",
+                            ORDER BY dt""",
                 )
 
             elif choice == 6:
