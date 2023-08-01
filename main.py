@@ -132,7 +132,8 @@ class ExpenseTracker:
             print("4. View summary by major category")
             print("5. View summary by month")
             print("6. List all expenses")
-            print("7. Exit")
+            print("7. List all income sources")
+            print("8. Exit")
 
             try:
                 choice = int(input())
@@ -198,6 +199,13 @@ class ExpenseTracker:
                 )
 
             elif choice == 7:
+                self.execute_and_print(
+                    title="ALL INCOME SOURCES:",
+                    query="""SELECT description, dt, amount FROM income
+                                            ORDER BY dt""",
+                )
+
+            elif choice == 8:
                 break
             else:
                 print("Invalid choice")
