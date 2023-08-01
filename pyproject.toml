@@ -1,0 +1,6 @@
+[tool.black]
+include = '^.*\.py$'
+line-length = 120
+exclude = '''
+  | yet_another_dir/sub_dir/sub_sub_dir/exclude_me3\.py
+'''

@@ -37,9 +37,9 @@ class ExpenseTracker:
         expenses = self.cur.fetchall()
         print(tabulate(expenses, headers=column_names, tablefmt="pretty"))
 
-    def get_date(self):
-        """Get the date of the expense"""
-        print("Is it current month's expense? Print 1 for yes, 2 - for previous month is assumed")
+    def get_dt(self):
+        """Get the date of the expense or income"""
+        print("Is it current date? Print 1 for yes, 2 - previous month is assumed")
         date_choice = int(input())
         if date_choice == 1:
             # first day ot the current month
@@ -52,12 +52,22 @@ class ExpenseTracker:
             date = last_day_of_previous_month.replace(day=1)
         return date
 
-    def add_expense(self):
-        date = self.get_date()
+    def get_price(self):
+        user_input = input("Enter amount: \n Allowed inputs: 10 | 10,5 | 10.5 | 500/41,5 | ... \n")
+        if "/" in user_input:
+            # parse the string and execute the division
+            numerator, denominator = user_input.split("/")
+            price = float(numerator.replace(",", ".")) / float(denominator.replace(",", "."))
+            price = round(price, 2)
+        else:
+            price = float(user_input.replace(",", "."))
+        return price
 
+    def get_expense_category(self):
+        """Obtain expense category from user"""
+        print("Select a category by number:")
         self.cur.execute("SELECT DISTINCT category FROM expenses ORDER BY category")
         categories = self.cur.fetchall()
-        print("Select a category by number:")
         for i, category in enumerate(categories):
             print(f"{i + 1}. {category[0]}")
         print(len(categories) + 1, "Add a new category")
@@ -66,18 +76,49 @@ class ExpenseTracker:
             category = input("Enter the new category name: ")
         else:
             category = categories[category_idx - 1][0]
+        return category
+
+    def get_income_description(self):
+        """Obtain income category from user"""
+        print("Select a description by number:")
+        self.cur.execute("SELECT DISTINCT description FROM income ORDER BY description")
+        descriptions = self.cur.fetchall()
+        for i, description in enumerate(descriptions):
+            print(f"{i + 1}. {description[0]}")
+        print(len(descriptions) + 1, "Add a new description")
+        description_idx = int(input())
+        if description_idx == len(descriptions) + 1:
+            description = input("Enter the new description name: ")
+        else:
+            description = descriptions[description_idx - 1][0]
+        return description
+
+    def add_expense(self):
+        dt = self.get_dt()
+        category = self.get_expense_category()
 
         if category in self.fixed_price_categories:
             price = self.fixed_price_categories[category]
             description = ""
         else:
-            price = float(input("Enter price: ").replace(",", "."))
+            price = self.get_price()
             description = input("Enter description or leave empty: ")
 
         self.cur.execute(
-            """INSERT INTO expenses (dt, description, category, price)
+            """INSERT INTO income (dt, description, category, price)
                                 VALUES (?, ?, ?, ?)""",
-            (date, description, category, price),
+            (dt, description, category, price),
+        )
+        self.conn.commit()
+
+    def add_income(self):
+        dt = self.get_dt()
+        description = self.get_income_description()
+        amount = self.get_price()
+        self.cur.execute(
+            """INSERT INTO income (dt, description, amount)
+                                VALUES (?, ?, ?)""",
+            (dt, description, amount),
         )
         self.conn.commit()
 
@@ -86,11 +127,12 @@ class ExpenseTracker:
         while True:
             print("\nSelect an option:")
             print("1. Add expense")
-            print("2. View summary by category")
-            print("3. View summary by major category")
-            print("4. View summary by month")
-            print("5. List all expenses")
-            print("6. Exit")
+            print("2. Add income")
+            print("3. View summary by category")
+            print("4. View summary by major category")
+            print("5. View summary by month")
+            print("6. List all expenses")
+            print("7. Exit")
 
             try:
                 choice = int(input())
@@ -102,6 +144,9 @@ class ExpenseTracker:
                 self.add_expense()
 
             elif choice == 2:
+                self.add_income()
+
+            elif choice == 3:
                 self.execute_and_print(
                     title="SUMMARY BY CATEGORY:",
                     query="""SELECT strftime('%Y', dt) as year, 
@@ -113,7 +158,7 @@ class ExpenseTracker:
                 ORDER BY 1 desc, 2 desc, 4 desc""",
                 )
 
-            elif choice == 3:
+            elif choice == 4:
                 self.execute_and_print(
                     title="SUMMARY BY MAJOR CATEGORY:",
                     query="""SELECT strftime('%Y', dt) as year, 
@@ -136,7 +181,7 @@ class ExpenseTracker:
                 ORDER BY 1 desc, 2 desc, 4 desc""",
                 )
 
-            elif choice == 4:
+            elif choice == 5:
                 self.execute_and_print(
                     title="SUMMARY BY MONTH:",
                     query="""SELECT strftime('%Y', dt) as year, strftime('%m', dt) as month, CAST(ROUND(sum(price)) AS INTEGER) as total
@@ -145,14 +190,14 @@ class ExpenseTracker:
                 ORDER BY 1 desc, 2 desc""",
                 )
 
-            elif choice == 5:
+            elif choice == 6:
                 self.execute_and_print(
                     title="ALL EXPENSES:",
                     query="""SELECT description, dt, category, price FROM expenses
                             ORDER BY dt""",
                 )
 
-            elif choice == 6:
+            elif choice == 7:
                 break
             else:
                 print("Invalid choice")

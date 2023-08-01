@@ -13,5 +13,15 @@ cur.execute(
             price Real NOT NULL)"""
 )
 
+
+cur.execute(
+    """CREATE TABLE IF NOT EXISTS income
+                (id INTEGER PRIMARY KEY AUTOINCREMENT,
+            dt DATE NOT NULL,
+            description TEXT NOT NULL,
+            amount Real NOT NULL)"""
+)
+
+
 conn.commit()
 conn.close()
