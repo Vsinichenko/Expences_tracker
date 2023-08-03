@@ -105,7 +105,7 @@ class ExpenseTracker:
             description = input("Enter description or leave empty: ")
 
         self.cur.execute(
-            """INSERT INTO income (dt, description, category, price)
+            """INSERT INTO expenses (dt, description, category, price)
                                 VALUES (?, ?, ?, ?)""",
             (dt, description, category, price),
         )
@@ -128,9 +128,9 @@ class ExpenseTracker:
             print("\nSelect an option:")
             print("1. Add expense")
             print("2. Add income")
-            print("3. View summary by category")
-            print("4. View summary by major category")
-            print("5. View summary by month")
+            print("3. View expenses by category")
+            print("4. View expenses by major category")
+            print("5. View expenses by month")
             print("6. List all expenses")
             print("7. List all income sources")
             print("8. Exit")
@@ -156,7 +156,7 @@ class ExpenseTracker:
                     CAST(ROUND(sum(price)) AS INTEGER) as total
                 FROM expenses 
                 GROUP BY 1, 2, 3
-                ORDER BY 1 desc, 2 desc, 4 desc""",
+                ORDER BY 1, 2, 4 desc""",
                 )
 
             elif choice == 4:
@@ -175,11 +175,11 @@ class ExpenseTracker:
                         WHEN category='Entgeltabrechnung' then 'Other'
                         WHEN category='Entertainment' then 'Luxury (Eating out, entertainment)'
                         WHEN category='Eating out' then 'Luxury (Eating out, entertainment)'
-                        else category end as category, 
+                        else category end as major_category, 
                     CAST(ROUND(sum(price)) AS INTEGER) as total
                 FROM expenses
-                GROUP BY 1, 2, 3
-                ORDER BY 1 desc, 2 desc, 4 desc""",
+                GROUP BY 1, 2, 3 
+                ORDER BY 1, 2, CAST(ROUND(sum(price)) AS INTEGER) desc""",
                 )
 
             elif choice == 5:
