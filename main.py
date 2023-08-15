@@ -188,7 +188,7 @@ class ExpenseTracker:
                     query="""SELECT strftime('%Y', dt) as year, strftime('%m', dt) as month, CAST(ROUND(sum(price)) AS INTEGER) as total
                 FROM expenses 
                 GROUP BY 1, 2
-                ORDER BY 1 desc, 2 desc""",
+                ORDER BY 1, 2""",
                 )
 
             elif choice == 6:
