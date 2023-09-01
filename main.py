@@ -18,7 +18,7 @@ class ExpenseTracker:
         "Washing machine": 2.5,
         "Health insurance": 127.65,
     }
-    db_filename = "expenses.db"
+    db_filename = "/Users/v.sinichenko/PycharmProjects/Expenses/expenses.db"
 
     def __init__(self):
         self.conn = None
@@ -39,17 +39,21 @@ class ExpenseTracker:
 
     def get_dt(self):
         """Get the date of the expense or income"""
-        print("Is it current date? Print 1 for yes, 2 - previous month is assumed")
-        date_choice = int(input())
-        if date_choice == 1:
-            # first day ot the current month
-            date = datetime.date.today()
-        else:
-            # first day of the previous month
-            now = datetime.date.today()
-            first_day_of_current_month = now.replace(day=1)
-            last_day_of_previous_month = first_day_of_current_month - datetime.timedelta(days=1)
-            date = last_day_of_previous_month.replace(day=1)
+        while True:
+            print("Is it current date? Print 1 for yes, 2 - last day of previous month is assumed")
+            date_choice = int(input())
+            if date_choice == 1:
+                # first day ot the current month
+                date = datetime.date.today()
+                break
+            elif date_choice == 2:
+                # last day of the previous month
+                now = datetime.date.today()
+                first_day_of_current_month = now.replace(day=1)
+                last_day_of_previous_month = first_day_of_current_month - datetime.timedelta(days=1)
+                date = last_day_of_previous_month
+                break
+
         return date
 
     def get_price(self):
