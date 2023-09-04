@@ -134,7 +134,7 @@ class ExpenseTracker:
             print("2. Add income")
             print("3. View expenses by category")
             print("4. View expenses by major category")
-            print("5. View expenses by month")
+            print("5. View summary by month")
             print("6. List all expenses")
             print("7. List all income sources")
             print("8. Exit")
@@ -166,33 +166,54 @@ class ExpenseTracker:
             elif choice == 4:
                 self.execute_and_print(
                     title="SUMMARY BY MAJOR CATEGORY:",
-                    query="""SELECT strftime('%Y', dt) as year, 
-                    strftime('%m', dt) as month, 
-                    CASE WHEN category='Rent' then 'Housing'
-                        WHEN category='Washing machine' then 'Housing'
-                        WHEN category='Phone' then 'Housing'
-                        WHEN category='Health insurance' then 'Housing'
-                        WHEN category='Internet' then 'Housing'
-                        WHEN category='Electricity' then 'Housing' 
-                        WHEN category='Youtube' then 'Comfort (Tech / Furniture / Subscriptions)'
-                        WHEN category='Birthday quarks' then 'Other'
-                        WHEN category='Entgeltabrechnung' then 'Other'
-                        WHEN category='Entertainment' then 'Luxury (Eating out, entertainment)'
-                        WHEN category='Eating out' then 'Luxury (Eating out, entertainment)'
-                        else category end as major_category, 
-                    CAST(ROUND(sum(price)) AS INTEGER) as total
+                    query="""
+                SELECT STRFTIME('%Y', dt)                 AS year,
+                       STRFTIME('%m', dt)                 AS month,
+                       CASE
+                           WHEN category = 'Rent' THEN 'Housing'
+                           WHEN category = 'Washing machine' THEN 'Housing'
+                           WHEN category = 'Phone' THEN 'Housing'
+                           WHEN category = 'Health insurance' THEN 'Housing'
+                           WHEN category = 'Internet' THEN 'Housing'
+                           WHEN category = 'Electricity' THEN 'Housing'
+                           WHEN category = 'Youtube' THEN 'Comfort (Tech / Furniture / Subscriptions)'
+                           WHEN category = 'Birthday quarks' THEN 'Other'
+                           WHEN category = 'Entgeltabrechnung' THEN 'Other'
+                           WHEN category = 'Entertainment' THEN 'Luxury (Eating out, entertainment)'
+                           WHEN category = 'Eating out' THEN 'Luxury (Eating out, entertainment)'
+                           ELSE category END              AS major_category,
+                       CAST(ROUND(SUM(price)) AS INTEGER) AS total
                 FROM expenses
-                GROUP BY 1, 2, 3 
-                ORDER BY 1, 2, CAST(ROUND(sum(price)) AS INTEGER) desc""",
+                GROUP BY 1, 2, 3
+                UNION ALL
+                SELECT STRFTIME('%Y', dt)                 AS year,
+                       STRFTIME('%m', dt)                 AS month,
+                       '__________________'                               AS major_category,
+                       CAST(ROUND(SUM(price)) AS INTEGER) AS total
+                FROM expenses
+                GROUP BY 1, 2, 3
+                ORDER BY year, month, total DESC
+                    """,
                 )
 
             elif choice == 5:
                 self.execute_and_print(
                     title="SUMMARY BY MONTH:",
-                    query="""SELECT strftime('%Y', dt) as year, strftime('%m', dt) as month, CAST(ROUND(sum(price)) AS INTEGER) as total
-                FROM expenses 
-                GROUP BY 1, 2
-                ORDER BY 1, 2""",
+                    query="""
+                SELECT e.year,
+                       e.month,
+                       i.total_income,
+                       e.total_expenses,
+                       total_income - total_expenses AS diff
+                FROM (SELECT STRFTIME('%Y', dt) AS year, STRFTIME('%m', dt) AS month, CAST(ROUND(SUM(price)) AS INTEGER) AS total_expenses
+                      FROM expenses
+                      GROUP BY 1, 2
+                      ORDER BY 1, 2) e
+                         LEFT JOIN
+                     (SELECT STRFTIME('%Y', dt) AS year, STRFTIME('%m', dt) AS month, CAST(ROUND(SUM(amount)) AS INTEGER) AS total_income
+                      FROM income
+                      GROUP BY 1, 2) i ON i.month = e.month AND i.year = e.year
+                """,
                 )
 
             elif choice == 6:
