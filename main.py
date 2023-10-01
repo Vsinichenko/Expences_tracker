@@ -135,7 +135,7 @@ class ExpenseTracker:
             print("3. View expenses by category")
             print("4. View expenses by major category")
             print("5. View summary by month")
-            print("6. List all expenses")
+            print("6. List recent expenses")
             print("7. List all income sources")
             print("8. Exit")
 
@@ -218,9 +218,9 @@ class ExpenseTracker:
 
             elif choice == 6:
                 self.execute_and_print(
-                    title="ALL EXPENSES:",
-                    query="""SELECT description, dt, category, price FROM expenses
-                            ORDER BY dt""",
+                    title="RECENT EXPENSES:",
+                    query="""SELECT * FROM (SELECT description, dt, category, price FROM expenses
+                            ORDER BY dt DESC LIMIT 15) sub order by dt""",
                 )
 
             elif choice == 7:
