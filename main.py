@@ -160,6 +160,13 @@ class ExpenseTracker:
                     CAST(ROUND(sum(price)) AS INTEGER) as total
                 FROM expenses 
                 GROUP BY 1, 2, 3
+                UNION ALL 
+                SELECT strftime('%Y', dt) as year,
+                strftime('%m', dt) as month, 
+                '__________________'  as category,
+                CAST(ROUND(sum(price)) AS INTEGER) as total
+                FROM expenses 
+                GROUP BY 1, 2, 3
                 ORDER BY 1, 2, 4 desc""",
                 )
 
