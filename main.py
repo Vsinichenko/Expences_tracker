@@ -227,7 +227,7 @@ class ExpenseTracker:
                 self.execute_and_print(
                     title="RECENT EXPENSES:",
                     query="""SELECT * FROM (SELECT description, dt, category, price FROM expenses
-                            ORDER BY dt DESC LIMIT 15) sub order by dt""",
+                            ORDER BY dt DESC LIMIT 50) sub order by dt""",
                 )
 
             elif choice == 7:
