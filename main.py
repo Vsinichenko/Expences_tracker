@@ -187,6 +187,7 @@ class ExpenseTracker:
                            WHEN category = 'Birthday quarks' THEN 'Other'
                            WHEN category = 'Entgeltabrechnung' THEN 'Other'
                            WHEN category = 'Entertainment' THEN 'Luxury (Eating out, entertainment)'
+                           WHEN category = 'Presents' THEN 'Luxury (Eating out, entertainment)'
                            WHEN category = 'Eating out' THEN 'Luxury (Eating out, entertainment)'
                            ELSE category END              AS major_category,
                        CAST(ROUND(SUM(price)) AS INTEGER) AS total
