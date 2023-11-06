@@ -11,7 +11,7 @@ class ExpenseTracker:
         "Rent": 655,
         "Internet": 24.9,
         "Phone": 15,
-        "Electricity": 40,
+        "Electricity": 26,
         "Youtube": 4.5,
         "Entgeltabrechnung": 3.9,
         "Birthday quarks": 2.45,
