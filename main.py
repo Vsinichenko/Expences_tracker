@@ -14,7 +14,6 @@ class ExpenseTracker:
         "Electricity": 26,
         "Youtube": 4.5,
         "Entgeltabrechnung": 3.9,
-        "Birthday quarks": 2.45,
         "Washing machine": 2.5,
         "Health insurance": 127.65,
     }
