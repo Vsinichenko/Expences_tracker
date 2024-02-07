@@ -18,6 +18,10 @@ class ExpenseTracker:
         "Health insurance": 127.65,
     }
     db_filename = "/Users/v.sinichenko/PycharmProjects/Expenses/expenses.db"
+    no_description_categories = [
+        "Mensa",
+        "Groceries"
+    ]
 
     def __init__(self):
         self.conn = None
@@ -102,6 +106,9 @@ class ExpenseTracker:
 
         if category in self.fixed_price_categories:
             price = self.fixed_price_categories[category]
+            description = ""
+        elif category in self.no_description_categories:
+            price = self.get_price()
             description = ""
         else:
             price = self.get_price()
