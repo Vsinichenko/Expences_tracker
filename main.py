@@ -182,13 +182,14 @@ class ExpenseTracker:
                            WHEN category = 'Health insurance' THEN 'Housing'
                            WHEN category = 'Internet' THEN 'Housing'
                            WHEN category = 'Electricity' THEN 'Housing'
+                           WHEN category = 'Entgeltabrechnung' THEN 'Housing'
                            WHEN category = 'Youtube' THEN 'Comfort (Tech / Furniture / Subscriptions)'
-                           WHEN category = 'Birthday quarks' THEN 'Other'
-                           WHEN category = 'Entgeltabrechnung' THEN 'Other'
-                           WHEN category = 'Entertainment' THEN 'Luxury (Eating out, entertainment)'
-                           WHEN category = 'Presents' THEN 'Luxury (Eating out, entertainment)'
-                           WHEN category = 'Eating out' THEN 'Luxury (Eating out, entertainment)'
-                           WHEN category = 'Beauty' THEN 'Luxury (Eating out, entertainment)'
+                           WHEN category = 'Groceries' THEN 'Food'
+                           WHEN category = 'Mensa' THEN 'Food'
+                           WHEN category = 'Entertainment' THEN 'Luxury (Eating out, entertainment, beauty)'
+                           WHEN category = 'Presents' THEN 'Luxury (Eating out, entertainment, beauty)'
+                           WHEN category = 'Eating out' THEN 'Luxury (Eating out, entertainment, beauty)'
+                           WHEN category = 'Beauty and Clothes' THEN 'Luxury (Eating out, entertainment, beauty)'
                            ELSE category END              AS major_category,
                        CAST(ROUND(SUM(price)) AS INTEGER) AS total
                 FROM expenses
