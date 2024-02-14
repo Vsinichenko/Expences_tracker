@@ -59,13 +59,20 @@ class ExpenseTracker:
 
         return date
 
+    def float_from_string(self, string):
+        return float(string.replace(",", "."))
+
     def get_price(self):
-        user_input = input("Enter amount: \n Allowed inputs: 10 | 10,5 | 10.5 | 500/41,5 | ... \n")
+        user_input = input("Enter amount: \n Allowed inputs: 10 | 10,5 | 10.5 | 500/41,5 | 5,3+10,1 |... \n")
         if "/" in user_input:
             # parse the string and execute the division
             numerator, denominator = user_input.split("/")
-            price = float(numerator.replace(",", ".")) / float(denominator.replace(",", "."))
+            price = self.float_from_string(numerator) / self.float_from_string(denominator)
             price = round(price, 2)
+        elif "+" in user_input:
+            a, b = user_input.split("/")
+            price = self.float_from_string(a)
+            price+= self.float_from_string(b)
         else:
             price = float(user_input.replace(",", "."))
         return price
