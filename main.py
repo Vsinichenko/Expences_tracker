@@ -18,10 +18,7 @@ class ExpenseTracker:
         "Health insurance": 127.65,
     }
     db_filename = "/Users/v.sinichenko/PycharmProjects/Expenses/expenses.db"
-    no_description_categories = [
-        "Mensa",
-        "Groceries"
-    ]
+    no_description_categories = ["Mensa", "Groceries"]
 
     def __init__(self):
         self.conn = None
@@ -72,7 +69,7 @@ class ExpenseTracker:
         elif "+" in user_input:
             a, b = user_input.split("/")
             price = self.float_from_string(a)
-            price+= self.float_from_string(b)
+            price += self.float_from_string(b)
         else:
             price = float(user_input.replace(",", "."))
         return price
