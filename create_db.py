@@ -22,6 +22,13 @@ cur.execute(
             amount Real NOT NULL)"""
 )
 
+cur.execute(
+    """CREATE TABLE IF NOT EXISTS fixed_price_categories
+                (
+            category TEXT UNIQUE NOT NULL,
+            price Real NOT NULL)"""
+)
+
 
 conn.commit()
 conn.close()

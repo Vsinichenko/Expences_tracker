@@ -6,17 +6,6 @@ from tabulate import tabulate
 class ExpenseTracker:
     """Track personal expenses and view summaries by category and month"""
 
-    fixed_price_categories = {
-        "Therapy": 45,
-        "Rent": 655,
-        "Internet": 24.9,
-        "Phone": 15,
-        "Electricity": 26,
-        "Youtube": 4.5,
-        "Entgeltabrechnung": 3.9,
-        "Washing machine": 2.5,
-        "Health insurance": 127.65,
-    }
     db_filename = "/Users/v.sinichenko/PycharmProjects/Expenses/expenses.db"
     no_description_categories = ["Mensa", "Groceries"]
 
@@ -109,8 +98,14 @@ class ExpenseTracker:
         dt = self.get_dt()
         category = self.get_expense_category()
 
-        if category in self.fixed_price_categories:
-            price = self.fixed_price_categories[category]
+        self.cur.execute("SELECT category FROM fixed_price_categories ORDER BY category")
+        fixed_price_categories = self.cur.fetchall()
+        fixed_price_categories = [el[0] for el in fixed_price_categories]
+
+        if category in fixed_price_categories:
+            self.cur.execute("SELECT price FROM fixed_price_categories WHERE category=?", (category,))
+            price = self.cur.fetchall()[0][0]
+            print(price)
             description = ""
         elif category in self.no_description_categories:
             price = self.get_price()
@@ -223,9 +218,9 @@ class ExpenseTracker:
                     query="""
                 SELECT e.year,
                        e.month,
-                       i.total_income,
+                       COALESCE(i.total_income, 0) total_income,
                        e.total_expenses,
-                       total_income - total_expenses AS diff
+                       COALESCE(i.total_income, 0) - total_expenses AS diff
                 FROM (SELECT STRFTIME('%Y', dt) AS year, STRFTIME('%m', dt) AS month, CAST(ROUND(SUM(price)) AS INTEGER) AS total_expenses
                       FROM expenses
                       GROUP BY 1, 2
