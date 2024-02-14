@@ -67,7 +67,7 @@ class ExpenseTracker:
             price = self.float_from_string(numerator) / self.float_from_string(denominator)
             price = round(price, 2)
         elif "+" in user_input:
-            a, b = user_input.split("/")
+            a, b = user_input.split("+")
             price = self.float_from_string(a)
             price += self.float_from_string(b)
         else:
