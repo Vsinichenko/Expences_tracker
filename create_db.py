@@ -6,7 +6,7 @@ cur = conn.cursor()
 
 cur.execute(
     """CREATE TABLE IF NOT EXISTS expenses
-                (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                (
             dt DATE NOT NULL,
             description TEXT,
             category TEXT NOT NULL,
