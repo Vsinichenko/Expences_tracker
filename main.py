@@ -70,6 +70,7 @@ class ExpenseTracker:
             a, b = user_input.split("+")
             price = self.float_from_string(a)
             price += self.float_from_string(b)
+            price = round(price, 2)
         else:
             price = float(user_input.replace(",", "."))
         return price
