@@ -193,6 +193,7 @@ class ExpenseTracker:
                            WHEN category = 'Groceries' THEN 'Food'
                            WHEN category = 'Mensa' THEN 'Food'
                            WHEN category = 'Entertainment' THEN 'Luxury (Eating out, entertainment, beauty)'
+                           WHEN category = 'Charity' THEN 'Luxury (Eating out, entertainment, beauty)'
                            WHEN category = 'Presents' THEN 'Luxury (Eating out, entertainment, beauty)'
                            WHEN category = 'Eating out' THEN 'Luxury (Eating out, entertainment, beauty)'
                            WHEN category = 'Beauty and Clothes' THEN 'Luxury (Eating out, entertainment, beauty)'
