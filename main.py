@@ -181,30 +181,15 @@ class ExpenseTracker:
                     query="""
                 SELECT STRFTIME('%Y', dt)                 AS year,
                        STRFTIME('%m', dt)                 AS month,
-                       CASE
-                           WHEN category = 'Rent' THEN 'Housing'
-                           WHEN category = 'Washing machine' THEN 'Housing'
-                           WHEN category = 'Phone' THEN 'Housing'
-                           WHEN category = 'Health insurance' THEN 'Housing'
-                           WHEN category = 'Internet' THEN 'Housing'
-                           WHEN category = 'Electricity' THEN 'Housing'
-                           WHEN category = 'Entgeltabrechnung' THEN 'Housing'
-                           WHEN category = 'Youtube' THEN 'Comfort (Tech / Furniture / Subscriptions)'
-                           WHEN category = 'Groceries' THEN 'Food'
-                           WHEN category = 'Mensa' THEN 'Food'
-                           WHEN category = 'Entertainment' THEN 'Luxury (Eating out, entertainment, beauty)'
-                           WHEN category = 'Charity' THEN 'Luxury (Eating out, entertainment, beauty)'
-                           WHEN category = 'Presents' THEN 'Luxury (Eating out, entertainment, beauty)'
-                           WHEN category = 'Eating out' THEN 'Luxury (Eating out, entertainment, beauty)'
-                           WHEN category = 'Beauty and Clothes' THEN 'Luxury (Eating out, entertainment, beauty)'
-                           ELSE category END              AS major_category,
+                       IFNULL(mcg.major_category, e.category),
                        CAST(ROUND(SUM(price)) AS INTEGER) AS total
-                FROM expenses
+                FROM expenses e
+                         LEFT JOIN major_category_groupings mcg ON e.category = mcg.category
                 GROUP BY 1, 2, 3
                 UNION ALL
                 SELECT STRFTIME('%Y', dt)                 AS year,
                        STRFTIME('%m', dt)                 AS month,
-                       '__________________'                               AS major_category,
+                       '__________________'               AS major_category,
                        CAST(ROUND(SUM(price)) AS INTEGER) AS total
                 FROM expenses
                 GROUP BY 1, 2, 3

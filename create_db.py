@@ -29,6 +29,14 @@ cur.execute(
             price Real NOT NULL)"""
 )
 
+cur.execute(
+    """CREATE TABLE major_category_groupings
+            (
+                category       TEXT,
+                major_category TEXT
+            )"""
+)
+
 
 conn.commit()
 conn.close()
