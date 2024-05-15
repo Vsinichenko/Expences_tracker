@@ -114,9 +114,9 @@ class ExpenseTracker:
             description = input("Enter description or leave empty: ")
 
         self.cur.execute(
-            """INSERT INTO expenses (dt, description, category, price)
-                                VALUES (?, ?, ?, ?)""",
-            (dt, description, category, price),
+            """INSERT INTO expenses (dt, description, category, price, insert_dt)
+                                VALUES (?, ?, ?, ?, ?)""",
+            (dt, description, category, price, datetime.datetime.now()),
         )
         self.conn.commit()
 
@@ -220,8 +220,14 @@ class ExpenseTracker:
             elif choice == 6:
                 self.execute_and_print(
                     title="RECENT EXPENSES:",
-                    query="""SELECT * FROM (SELECT description, dt, category, price FROM expenses
-                            ORDER BY dt DESC LIMIT 50) sub order by dt""",
+                    query="""
+                        SELECT description, dt, category, price
+                        FROM (SELECT description, dt, category, price, insert_dt
+                              FROM expenses
+                              ORDER BY insert_dt DESC
+                              LIMIT 50) sub
+                        ORDER BY insert_dt
+                    """,
                 )
 
             elif choice == 7:
