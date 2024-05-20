@@ -1,6 +1,7 @@
 import sqlite3
 import datetime
 from tabulate import tabulate
+from sympy import sympify
 
 
 class ExpenseTracker:
@@ -49,18 +50,13 @@ class ExpenseTracker:
         return float(string.replace(",", "."))
 
     def get_price(self):
-        user_input = input("Enter amount: \n Allowed inputs: 10 | 10,5 | 10.5 | 500/41,5 | 5,3+10,1 |... \n")
-        if "/" in user_input:
-            # parse the string and execute the division
-            numerator, denominator = user_input.split("/")
-            price = self.float_from_string(numerator) / self.float_from_string(denominator)
-            price = round(price, 2)
-        elif "+" in user_input:
-            terms = user_input.split("+")
-            price = sum(self.float_from_string(t) for t in terms)
-            price = round(price, 2)
-        else:
-            price = float(user_input.replace(",", "."))
+        user_input = input(
+            "Enter amount: \n Allowed inputs: 10 | 10,5 | 10.5 | 500/41,5 | 5,3+10,1 | (10+100)/42,8 |... \n"
+        )
+        user_input = user_input.replace(",", ".")
+        price = float(sympify(user_input))
+        price = round(price, 2)
+
         return price
 
     def get_expense_category(self):
