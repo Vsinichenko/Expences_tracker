@@ -18,9 +18,9 @@ class ExpenseTracker:
         self.cur = self.conn.cursor()
         return self
 
-    def execute_and_print(self, title, query):
+    def select_and_print_pretty(self, title, query):
         """Execute the query and print the results in a prettified table"""
-        print(title.upper())
+        print(title)
         self.cur.execute(query)
         column_names = [description[0] for description in self.cur.description]
         expenses = self.cur.fetchall()
@@ -158,7 +158,7 @@ class ExpenseTracker:
                 self.add_income()
 
             elif choice == 3:
-                self.execute_and_print(
+                self.select_and_print_pretty(
                     title="SUMMARY BY CATEGORY:",
                     query="""SELECT strftime('%Y', dt) as year, 
                     strftime('%m', dt) as month, 
@@ -177,7 +177,7 @@ class ExpenseTracker:
                 )
 
             elif choice == 4:
-                self.execute_and_print(
+                self.select_and_print_pretty(
                     title="SUMMARY BY MAJOR CATEGORY:",
                     query="""
                 SELECT STRFTIME('%Y', dt)                 AS year,
@@ -199,7 +199,7 @@ class ExpenseTracker:
                 )
 
             elif choice == 5:
-                self.execute_and_print(
+                self.select_and_print_pretty(
                     title="SUMMARY BY MONTH:",
                     query="""
                 SELECT e.year,
@@ -219,7 +219,7 @@ class ExpenseTracker:
                 )
 
             elif choice == 6:
-                self.execute_and_print(
+                self.select_and_print_pretty(
                     title="RECENT EXPENSES:",
                     query="""
                         SELECT description, dt, category, price
@@ -232,17 +232,17 @@ class ExpenseTracker:
                 )
 
             elif choice == 7:
-                self.execute_and_print(
+                self.select_and_print_pretty(
                     title="ALL INCOME SOURCES:",
                     query="""SELECT description, dt, amount FROM income
                                             ORDER BY dt""",
                 )
 
             elif choice == 8:
-                self.execute_and_print(
-                    title="Most recent expense has been deleted",
-                    query="""DELETE FROM expenses
-                        WHERE insert_dt = (SELECT MAX(insert_dt) FROM expenses)""",
+                print("Most recent expense has been removed")
+                self.cur.execute(
+                    """DELETE FROM expenses
+                        WHERE insert_dt = (SELECT MAX(insert_dt) FROM expenses)"""
                 )
 
             elif choice == 9:
