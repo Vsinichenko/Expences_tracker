@@ -142,7 +142,8 @@ class ExpenseTracker:
             print("5. View summary by month")
             print("6. List recent expenses")
             print("7. List all income sources")
-            print("8. Exit")
+            print("8. Remove last expense")
+            print("9. Exit")
 
             try:
                 choice = int(input())
@@ -238,6 +239,13 @@ class ExpenseTracker:
                 )
 
             elif choice == 8:
+                self.execute_and_print(
+                    title="Most recent expense has been deleted",
+                    query="""DELETE FROM expenses
+                        WHERE insert_dt = (SELECT MAX(insert_dt) FROM expenses)""",
+                )
+
+            elif choice == 9:
                 break
             else:
                 print("Invalid choice")
