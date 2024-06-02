@@ -218,7 +218,7 @@ class ExpenseTracker:
                 self.select_and_print_pretty(
                     title="RECENT EXPENSES:",
                     query="""
-                        SELECT description, dt, category, price
+                        SELECT description, dt, category, price, insert_dt
                         FROM (SELECT description, dt, category, price, insert_dt
                               FROM expenses
                               ORDER BY insert_dt DESC
