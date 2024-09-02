@@ -25,7 +25,7 @@ class ExpenseTracker:
         self.cur.execute(query)
         column_names = [description[0] for description in self.cur.description]
         expenses = self.cur.fetchall()
-        print(tabulate(expenses, headers=column_names, tablefmt="pretty"))
+        print(tabulate(expenses, headers=column_names, tablefmt="psql",  floatfmt=",.0f"))
 
     def get_dt(self):
         """Get the date of the expense or income"""
@@ -200,15 +200,15 @@ class ExpenseTracker:
                     query="""
                 SELECT e.year,
                        e.month,
-                       COALESCE(i.total_income, 0) total_income,
+                       COALESCE(i.total_income, 0)                     total_income,
                        e.total_expenses,
                        COALESCE(i.total_income, 0) - total_expenses AS diff
-                FROM (SELECT STRFTIME('%Y', dt) AS year, STRFTIME('%m', dt) AS month, CAST(ROUND(SUM(price)) AS INTEGER) AS total_expenses
+                FROM (SELECT STRFTIME('%Y', dt) AS year, STRFTIME('%m', dt) AS month, ROUND(SUM(price)) AS total_expenses
                       FROM expenses
                       GROUP BY 1, 2
                       ORDER BY 1, 2) e
                          LEFT JOIN
-                     (SELECT STRFTIME('%Y', dt) AS year, STRFTIME('%m', dt) AS month, CAST(ROUND(SUM(amount)) AS INTEGER) AS total_income
+                     (SELECT STRFTIME('%Y', dt) AS year, STRFTIME('%m', dt) AS month, ROUND(SUM(amount)) AS total_income
                       FROM income
                       GROUP BY 1, 2) i ON i.month = e.month AND i.year = e.year
                 """,
