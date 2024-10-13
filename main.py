@@ -7,7 +7,7 @@ from sympy import sympify
 class ExpenseTracker:
     """Track personal expenses and view summaries by category and month"""
 
-    db_filename = "/Users/v.sinichenko/PycharmProjects/Expenses/expenses.db"
+    db_filename = "../expenses.db"
     no_description_categories = ["Mensa", "Groceries"]
 
     def __init__(self):
