@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+from dateutil.relativedelta import relativedelta
 from tabulate import tabulate
 from sympy import sympify
 
@@ -7,7 +8,7 @@ from sympy import sympify
 class ExpenseTracker:
     """Track personal expenses and view summaries by category and month"""
 
-    db_filename = "expenses.db"
+    db_filename = "/Users/v.sinichenko/Library/Mobile Documents/com~apple~CloudDocs/MyFiles/Python/Expenses/expenses.db"
     no_description_categories = ["Mensa", "Groceries"]
 
     def __init__(self):
@@ -25,24 +26,38 @@ class ExpenseTracker:
         self.cur.execute(query)
         column_names = [description[0] for description in self.cur.description]
         expenses = self.cur.fetchall()
-        print(tabulate(expenses, headers=column_names, tablefmt="psql",  floatfmt=",.0f"))
+        print(tabulate(expenses, headers=column_names, tablefmt="psql", floatfmt=",.0f"))
 
     def get_dt(self):
         """Get the date of the expense or income"""
         while True:
-            print("Is it current date? Print 1 for yes, 2 - last day of previous month is assumed")
-            date_choice = int(input())
+            print(
+                """Select date: 
+                1 - current date
+                2 - last day of previous month is assumed 
+                3 - last day of the month before last"""
+            )
+            try:
+                date_choice = int(input())
+            except ValueError:
+                print("Invalid choice")
+                continue
+
             if date_choice == 1:
                 # first day ot the current month
                 date = datetime.date.today()
                 break
             elif date_choice == 2:
                 # last day of the previous month
-                now = datetime.date.today()
-                first_day_of_current_month = now.replace(day=1)
-                last_day_of_previous_month = first_day_of_current_month - datetime.timedelta(days=1)
-                date = last_day_of_previous_month
+                date = (datetime.date.today() - relativedelta(months=1)).replace(day=1)
                 break
+            elif date_choice == 3:
+                # last day of the month before last
+                date = (datetime.date.today() - relativedelta(months=2)).replace(day=1)
+                break
+            else:
+                print("Invalid number")
+                continue
 
         return date
 
@@ -62,7 +77,13 @@ class ExpenseTracker:
     def get_expense_category(self):
         """Obtain expense category from user"""
         print("Select a category by number:")
-        self.cur.execute("SELECT DISTINCT category FROM expenses ORDER BY category")
+        self.cur.execute(
+            """SELECT DISTINCT e.category
+        FROM expenses e
+                 LEFT JOIN outdated_categories oc ON oc.category = e.category
+        WHERE oc.category IS NULL
+        ORDER BY e.category """
+        )
         categories = self.cur.fetchall()
         for i, category in enumerate(categories):
             print(f"{i + 1}. {category[0]}")

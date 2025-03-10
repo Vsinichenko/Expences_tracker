@@ -30,7 +30,14 @@ cur.execute(
 )
 
 cur.execute(
-    """CREATE TABLE major_category_groupings
+    """CREATE TABLE IF NOT EXISTS outdated_categories
+                (
+            category TEXT UNIQUE NOT NULL)"""
+)
+
+
+cur.execute(
+    """CREATE TABLE IF NOT EXISTS major_category_groupings
             (
                 category       TEXT,
                 major_category TEXT
